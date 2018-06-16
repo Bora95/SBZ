@@ -1,0 +1,30 @@
+<ul class="nav flex-column" ng-if="$root.user.type == 'ADMIN'">
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.add-user" ui-sref-active="active">
+				Add user
+		</a>
+	</li>
+</ul>
+
+<ul class="nav flex-column" ng-if="$root.user.type == 'DOCTOR'">
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.get-diagnose" ui-sref-active="active">
+				Get diagnose
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.get-disies" ui-sref-active="active">
+				Get diseases
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.get-symptoms" ui-sref-active="active">
+				Get symptoms
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.give-therapy" ui-sref-active="active">
+				Give therapy
+		</a>
+	</li>
+</ul>

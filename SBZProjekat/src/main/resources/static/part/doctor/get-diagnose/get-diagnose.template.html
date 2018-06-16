@@ -1,0 +1,29 @@
+<div class="col-md-6">
+	<form name="diagnose">
+		<div angucomplete-alt id="selection"
+				 placeholder="Search medical records"
+				 maxlength="50"
+			  	 pause="100"
+			     selected-object="$ctrl.selectedRecord"
+			     local-data="$ctrl.records"
+			     search-fields="jmbg,firstName,lastName"
+			     title-field="jmbg,firstName,lastName"
+			     minlength="1"
+			     input-class="form-control form-group"
+			     override-suggestions="true"
+			     match-class="highlight"></div>
+		<select class="form-group form-control" ng-model="$ctrl.type" required >
+			<option disabled selected value>Tip bolesti</option>
+			<option value="TYPE1">Prvi tip</option>
+			<option value="TYPE2">Drugi tip</option>
+			<option value="TYPE3">Treci tip</option>
+		</select>
+		<isteven-multi-select class="form-group form-control" input-model="$ctrl.symptoms" output-model="$ctrl.selectedSymptoms" button-label="name" item-label="name" tick-property="ticked"></isteven-multi-select>
+		<input type="submit" class="btn btn-custom" value="Diagnose" ng-click="diagnose.$valid && $ctrl.send()"/>
+	</form>
+	<input type="text" class="form-group form-control mt-3" placeholder="Diagnose" ng-model="$ctrl.diagnoseStatus" disabled>
+	<button class="btn btn-custom" ng-click="$ctrl.redirect()">Give therapy</button>
+	<p>
+		{{$ctrl.status}}
+	</p>
+</div>

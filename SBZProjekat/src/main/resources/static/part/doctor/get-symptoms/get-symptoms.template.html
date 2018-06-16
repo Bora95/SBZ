@@ -1,0 +1,23 @@
+<div class="col-md-6">
+	<div angucomplete-alt id="selection"
+				 placeholder="Search diseases"
+				 maxlength="50"
+			  	 pause="100"
+			     selected-object="$ctrl.selected"
+			     local-data="$ctrl.disies"
+			     search-fields="name"
+			     title-field="name"
+			     minlength="1"
+			     input-class="form-control form-group"
+			     override-suggestions="true"
+			     match-class="highlight"></div>
+	<p>
+		{{$ctrl.status}}
+	</p>
+	
+	<table ng-if="$ctrl.selected.originalObject" class="table text-center">
+		<tr><th>Symptoms<th></tr>
+		<tr ng-repeat="s in $ctrl.selected.originalObject.specificSymptoms"><td>{{s.name}}<td></tr>
+		<tr ng-repeat="s in $ctrl.selected.originalObject.symptoms"><td>{{s.name}}<td></tr>
+	</table>
+</div>

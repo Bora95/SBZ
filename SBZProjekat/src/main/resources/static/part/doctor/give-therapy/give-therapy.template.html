@@ -1,0 +1,32 @@
+<div class="col-md-6">
+	<form>
+		<div angucomplete-alt id="selection"
+				 placeholder="Search medical records"
+				 maxlength="50"
+			  	 pause="100"
+			     selected-object="$ctrl.selectedRecord"
+			     local-data="$ctrl.records"
+			     search-fields="jmbg,firstName,lastName"
+			     title-field="jmbg,firstName,lastName"
+			     minlength="1"
+			     input-class="form-control form-group"
+			     override-suggestions="true"
+			     match-class="highlight"
+			     initial-value="$ctrl.initRecord"></div>
+			     
+		<div angucomplete-alt id="selection"
+				 placeholder="Search diseases"
+				 maxlength="50"
+			  	 pause="100"
+			     selected-object="$ctrl.selectedDisies"
+			     local-data="$ctrl.disies"
+			     search-fields="name"
+			     title-field="name"
+			     minlength="1"
+			     input-class="form-control form-group"
+			     override-suggestions="true"
+			     match-class="highlight"
+			     initial-value="$ctrl.initDisies"></div>
+		<isteven-multi-select class="form-group form-control" input-model="$ctrl.drugs" output-model="$ctrl.selectedDrugs" button-label="name" item-label="name" tick-property="ticked"></isteven-multi-select>
+	</form>
+</div>

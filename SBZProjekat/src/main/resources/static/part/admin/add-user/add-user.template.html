@@ -1,0 +1,17 @@
+<div class="col-md-4">
+	<form name="add">
+		<input type="text" class="form-group form-control" placeholder="Username*" ng-model="$ctrl.user.username" required/>
+		<input type="text" class="form-group form-control" placeholder="Password*" ng-model="$ctrl.user.password" minlength="5" required/>
+		<input type="text" class="form-group form-control" placeholder="First name*" ng-model="$ctrl.user.firstName" required/>
+		<input type="text" class="form-group form-control" placeholder="Last name*" ng-model="$ctrl.user.lastName" required/>
+		<select ng-model="$ctrl.user.type" class="form-group form-control" required>
+			<option disabled selected value>Type*</option>
+			<option value="ADMIN">Admin</option>
+			<option value="DOCTOR">Doctor</option>
+		</select>
+		<input type="submit" class="btn btn-custom" value="Add user" ng-click="add.$valid && $ctrl.send()"/>
+		<p>
+			{{$ctrl.status}}
+		</p>
+</form>
+</div>

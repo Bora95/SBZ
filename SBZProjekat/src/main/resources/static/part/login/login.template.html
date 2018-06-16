@@ -1,0 +1,13 @@
+<div class="d-flex justify-content-center">
+	<div class="col-md-4 panel">
+		<h2>Log in:</h2>
+		<form name="login">
+			<input type="text" class="form-group form-control" placeholder="Username*" ng-model="$ctrl.user.username" required autofocus/>
+			<input type="password" class="form-group form-control" placeholder="Password*" ng-model="$ctrl.user.password" minlength="5" required/>
+			<input type="submit" class="btn btn-custom" value="Log in" ng-click="login.$valid && $ctrl.send()"/>
+			<p>
+				{{$ctrl.status}}
+			</p>
+		</form>
+	</div>
+</div>

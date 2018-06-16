@@ -1,0 +1,12 @@
+<div class="col-md-6">
+	<isteven-multi-select class="form-group form-control" input-model="$ctrl.symptoms" output-model="$ctrl.selectedSymptoms" button-label="name" item-label="name" tick-property="ticked"></isteven-multi-select>
+	<button  class="btn btn-custom" ng-click="$ctrl.send()">Get</button>
+	<p>
+		{{$ctrl.status}}
+	</p>
+	
+	<table ng-if="$ctrl.disies" class="table text-center">
+		<tr><th>Name<th></tr>
+		<tr ng-repeat="d in $ctrl.disies"><td>{{d.name}}<td></tr>
+	</table>
+</div>

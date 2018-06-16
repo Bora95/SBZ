@@ -1,0 +1,103 @@
+package drools.spring.rules;
+
+import com.sbz.projekat.SBZProjekat.disies.Disies;
+import com.sbz.projekat.SBZProjekat.symptom.Symptom;
+import com.google.common.collect.Sets;
+import java.util.Set;
+import com.sbz.projekat.SBZProjekat.medicalRecord.MedicalRecordService;
+import com.sbz.projekat.SBZProjekat.resoner.DisiesSymptomsFact;
+import java.lang.Double;
+
+global java.util.Map disiesSymptoms;
+global MedicalRecordService medicalRecordService;
+global java.lang.String jmbg;
+global java.util.List ret;
+
+rule "Simptom of disies"
+	agenda-group "getDisesSymptoms"
+	when
+		$s : Symptom()
+		$d : Disies( $s memberOf symptoms || $s memberOf specificSymptoms )
+	then
+		if(disiesSymptoms.containsKey($d.getId())) {
+			((Set)(disiesSymptoms.get($d.getId()))).add($s);
+		} else {
+			disiesSymptoms.put($d.getId(), Sets.newHashSet($s));
+		}
+end
+
+rule "Check records symptoms"
+	agenda-group "getDisesSymptoms"
+	when
+		$d : Disies( $s : symptoms )
+		$ss : Symptom( !drug.isEmpty() || !symptom.isEmpty() || !disies.isEmpty() ) from $s;
+	then
+		if(disiesSymptoms.containsKey($d.getId()) && !((Set)(disiesSymptoms.get($d.getId()))).contains($ss) && medicalRecordService.checkSymptom(jmbg, $ss.getId())) {
+			((Set)(disiesSymptoms.get($d.getId()))).add($ss);
+		} else if(medicalRecordService.checkSymptom(jmbg, $ss.getId())){
+			disiesSymptoms.put($d.getId(), Sets.newHashSet($ss));
+		}
+end
+
+rule "Check records specific symptoms"
+	agenda-group "getDisesSymptoms"
+	when
+		$d : Disies( $s : specificSymptoms )
+		$ss : Symptom( !drug.isEmpty() || !symptom.isEmpty() || !disies.isEmpty() ) from $s;
+	then
+		if(disiesSymptoms.containsKey($d.getId()) && !((Set)(disiesSymptoms.get($d.getId()))).contains($ss) && medicalRecordService.checkSymptom(jmbg, $ss.getId())) {
+			((Set)(disiesSymptoms.get($d.getId()))).add($ss);
+		} else if(medicalRecordService.checkSymptom(jmbg, $ss.getId())){
+			disiesSymptoms.put($d.getId(), Sets.newHashSet($ss));
+		}
+end
+
+rule "Get diagnose for TYPE1"
+	agenda-group "getDiagnose_1"
+	when
+		$result : DisiesSymptomsFact() from accumulate(
+			$ds : DisiesSymptomsFact(symptoms.size() >= 4),
+			init(DisiesSymptomsFact max = null),
+			action(
+				if(max == null) {
+					max = $ds;
+				} else if($ds.proc() > max.proc()) {
+					max = $ds;
+				} else if($ds.proc() == max.proc() && $ds.symptomsCount() >= max.symptomsCount()) {
+					max = $ds;
+				}
+			),
+			result(max)
+		)
+	then
+		System.out.println($result.getDisies().getName());
+		ret.add($result);
+end
+
+rule "Get diagnose for TYPE2"
+	agenda-group "getDiagnose_2"
+	when
+		$ds : DisiesSymptomsFact( symptomsCount() == symptoms.size() )
+	then
+		ret.add($ds);
+end
+
+rule "Get diagnose for TYPE3"
+	agenda-group "getDiagnose_3"
+	when
+		$ds : DisiesSymptomsFact( $s : symptoms, $ss : disies.getSymptoms() )
+		Number( intValue >= 1 ) from accumulate(
+			Symptom(this memberOf $ds.getDisies().getSpecificSymptoms()) from $s,
+			init(int count = 0;),
+			action(count++;),
+			result(count)
+		)
+		Number( intValue >= 2 ) from accumulate(
+			Symptom( this memberOf $s ) from $ss,
+			init( int count = 0; ),
+			action(count++;)
+			result(count)
+		)
+	then
+		ret.add($ds);
+end
