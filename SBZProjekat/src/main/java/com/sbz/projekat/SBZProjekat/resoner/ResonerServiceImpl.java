@@ -41,7 +41,7 @@ public class ResonerServiceImpl implements ResonerService {
 
 	@Override
 	public Disies diagnose(Set<Long> symptoms, Disies.Type type, String jmbg) {
-		KieSession kieSession = kieContainer.newKieSession();
+		KieSession kieSession = kieContainer.newKieSession("diseasesSession");
 		HashedMap<Long, Set<Symptom>> disiesSymptoms = new HashedMap<>();
 		List<DisiesSymptomsFact> result = new ArrayList<>();
 		kieSession.setGlobal("ret", result);
@@ -102,7 +102,7 @@ public class ResonerServiceImpl implements ResonerService {
 		if(drugs == null || drugs.isEmpty())
 			return null;
 			
-		KieSession kieSession = kieContainer.newKieSession();
+		KieSession kieSession = kieContainer.newKieSession("diseasesSession");
 		Set<Substance> alergicToSubstance = new HashSet<>();
 		Set<Drug> alergicToDrug = new HashSet<>();
 		kieSession.setGlobal("alergicToSubstances", alergicToSubstance);
@@ -128,7 +128,7 @@ public class ResonerServiceImpl implements ResonerService {
 
 	@Override
 	public List<MedicalRecord> getReport(ReportType type) {
-		KieSession kieSession = kieContainer.newKieSession();
+		KieSession kieSession = kieContainer.newKieSession("diseasesSession");
 		Set<MedicalRecord> patients = new HashSet<>();
 		kieSession.setGlobal("patients", patients);
 		switch (type) {

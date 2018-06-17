@@ -1,4 +1,4 @@
-package drools.spring.rules;
+package disies;
 
 import com.sbz.projekat.SBZProjekat.disies.Disies;
 import com.sbz.projekat.SBZProjekat.symptom.Symptom;

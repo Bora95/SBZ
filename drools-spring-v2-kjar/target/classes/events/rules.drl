@@ -1,0 +1,17 @@
+package events;
+
+import com.sbz.projekat.SBZProjekat.simulation.HeartBeatEvent;
+
+rule "More than 25"
+    when
+    	Number( intValue > 25 ) from accumulate(
+    		HeartBeatEvent()
+    		over window:time(10s),
+    		init(int i = 0;),
+    		action(i++;),
+    		result(i)
+    	)
+    then
+        System.out.println("ubrzan rad srca");
+        
+end

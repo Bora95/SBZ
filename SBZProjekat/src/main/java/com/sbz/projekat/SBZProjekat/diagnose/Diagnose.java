@@ -120,4 +120,9 @@ public class Diagnose {
         return true;
 	}
 	
+	@Override
+	public int hashCode() {
+		return Math.toIntExact(getId());
+	}
+	
 }
