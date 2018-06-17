@@ -1,5 +1,4 @@
 'use strict';
 
-angular.module('add-user', [
-	'ui.router'
+angular.module('add-substance', [
 ]);

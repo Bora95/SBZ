@@ -13,8 +13,8 @@ angular.module('core.record').service('RecordService', function($http) {
 			return $http.post('/api/record/', data);
 		};
 		
-		this.addDiagnose = (jmbg, data) => {
-			return $http.put(`/api/record/${jmbg}`, data);
+		this.addDiagnose = (data) => {
+			return $http.put('/api/record/', data);
 		};
 		
 		this.delete = (jmbg) => {

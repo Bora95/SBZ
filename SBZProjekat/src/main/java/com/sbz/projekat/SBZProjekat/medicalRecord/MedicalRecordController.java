@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sbz.projekat.SBZProjekat.diagnose.DiagnoseDTO;
+import com.sbz.projekat.SBZProjekat.resoner.ResonerService;
 import com.sbz.projekat.SBZProjekat.user.User;
 
 @RestController
@@ -28,6 +29,8 @@ public class MedicalRecordController {
 	private HttpSession session;
 	@Autowired
 	private MedicalRecordService medicalRecordService;
+	@Autowired
+	private ResonerService resonerService;
 	
 	@GetMapping
 	public ResponseEntity<List<MedicalRecord>> getAll() {
@@ -68,13 +71,21 @@ public class MedicalRecordController {
 		return new ResponseEntity<>(s, HttpStatus.OK);
 	}
 	
-	@PutMapping("/{jmbg:(0[1-9]|[1-2][0-9]|31(?!(?:0[2469]|11))|30(?!02))(0[1-9]|1[0-2])([09][0-9]{2})([0-8][0-9]|9[0-6])([0-9]{3})(\\d)$}")
-	public ResponseEntity<MedicalRecord> addDiagnose(@RequestBody @Valid DiagnoseDTO input, @PathVariable String jmbg) {
+	@PutMapping
+	public ResponseEntity<MedicalRecord> addDiagnose(@RequestBody @Valid DiagnoseDTO input) {
 		User user = (User) session.getAttribute("user");
 		if(user == null || !user.getType().equals(User.Type.DOCTOR))
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		if(input.getJmbg() == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		
-		MedicalRecord s = medicalRecordService.addDiagnose(input, jmbg);
+		input.setDoctor(user.getId());
+		String ret = resonerService.validateDiagnose(input);
+		if(ret == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		if(ret != "")
+			return new ResponseEntity<>(new MedicalRecord(null, ret, null, null), HttpStatus.NOT_ACCEPTABLE);
+		MedicalRecord s = medicalRecordService.addDiagnose(input);
 		if(s == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		

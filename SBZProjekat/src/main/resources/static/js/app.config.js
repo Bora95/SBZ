@@ -19,6 +19,30 @@ angular.module('sbz')
 				component: 'myAddUser'
 			})
 			.state({
+				name: 'home.add-substance',
+				url: '/home/add-substance',
+				component: 'myAddSubstance'
+			})
+			.state({
+				name: 'home.add-drug',
+				url: '/home/add-drug',
+				component: 'myAddDrug'
+			})
+			.state({
+				name: 'home.add-symptom',
+				url: '/home/add-symptom',
+				component: 'myAddSymptom'
+			})
+			.state({
+				name: 'home.add-disies',
+				url: '/home/add-diseas',
+				component: 'myAddDisies'
+			}).state({
+				name: 'home.add-record',
+				url: '/home/add-record',
+				component: 'myAddRecord'
+			})
+			.state({
 				name: 'home.get-diagnose',
 				url: '/home/get-diagnose',
 				component: 'myGetDiagnose'
@@ -41,6 +65,11 @@ angular.module('sbz')
 					jmbg: null, 
 					disies : null	
 				}
+			})
+			.state({
+				name: 'home.get-report',
+				url: '/home/get-report',
+				component: 'myGetReport'
 			})
 			.state({
 				name: 'error',

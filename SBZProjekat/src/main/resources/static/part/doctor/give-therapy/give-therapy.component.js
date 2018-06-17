@@ -34,5 +34,35 @@ angular.module('give-therapy').component('myGiveTherapy', {
 		DrugService.getAll().then( (response) => {
 			this.drugs = response.data;
 		});
+		
+		this.send = () => {
+			this.status = null;
+			if(!this.selectedRecord || !this.selectedRecord.originalObject.jmbg) {
+				this.status = "Select medical record";
+				return;
+			}
+			if(!this.selectedDisies || !this.selectedDisies.originalObject.id) {
+				this.status = "Select diseas";
+				return;
+			}
+			if(this.selectedDrugs.length == 0) {
+				this.status = "Select drugs";
+				return;
+			}
+			
+			var drugs = [];
+			for ( var i=0; i < this.selectedDrugs.length; i++) {
+				drugs.push(this.selectedDrugs[i].id);
+			}
+			
+			RecordService.addDiagnose({jmbg:this.selectedRecord.originalObject.jmbg, disies:this.selectedDisies.originalObject.id, drugs:drugs}).then( () => {
+				$state.go('home');
+			}, (response) => {
+				if(response.status == 406)
+					this.status = "Warnign can not give therapy because of alergies to: " + response.data.firstName;
+				else
+					this.status = response.status;
+			});
+		};
 	}
 });

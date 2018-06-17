@@ -1,0 +1,10 @@
+<div class="col-md-4">
+	<form name="add">
+		<input type="text" class="form-group form-control" placeholder="Name*" ng-model="$ctrl.substance.name" required/>
+		<input type="submit" class="btn btn-custom" value="Add" ng-click="add.$valid && $ctrl.send()"/>
+		<p>
+			{{$ctrl.status}}
+		</p>
+</form>
+	
+</div>

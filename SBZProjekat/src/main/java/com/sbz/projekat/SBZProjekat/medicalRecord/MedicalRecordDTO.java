@@ -29,6 +29,8 @@ public class MedicalRecordDTO {
 	
 	private Set<Long> alergicToSubstances;
 	
+	private Set<Long> alergicToDrugs;
+	
 	public MedicalRecordDTO() {}
 	
 	public String getJmbg() {
@@ -72,5 +74,16 @@ public class MedicalRecordDTO {
 	public void setAlergicToSubstances(Set<Long> alergicToSubstances) {
 		this.alergicToSubstances = alergicToSubstances;
 	}
+
+	public Set<Long> getAlergicToDrugs() {
+		if(alergicToDrugs == null)
+			alergicToDrugs = new HashSet<>();
+		return alergicToDrugs;
+	}
+
+	public void setAlergicToDrugs(Set<Long> alergicToDrugs) {
+		this.alergicToDrugs = alergicToDrugs;
+	}
+	
 	
 }

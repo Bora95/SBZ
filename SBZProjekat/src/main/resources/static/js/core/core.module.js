@@ -6,5 +6,6 @@ angular.module('core', [
 	'core.symptom',
 	'core.record',
 	'core.disies',
-	'core.drug'
+	'core.drug',
+	'core.substance'
 ]);

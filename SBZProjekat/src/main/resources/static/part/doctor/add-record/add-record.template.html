@@ -1,0 +1,22 @@
+<div class="col-md-4">
+	<form name="add">
+		<input type="text" class="form-group form-control" placeholder="JMBG*" ng-model="$ctrl.data.jmbg" required/>
+		<input type="text" class="form-group form-control" placeholder="First name*" ng-model="$ctrl.data.firstName" required/>
+		<input type="text" class="form-group form-control" placeholder="Last name*" ng-model="$ctrl.data.lastName" required/>
+		<select ng-model="$ctrl.data.gender" class="form-group form-control" required>
+			<option disabled selected value>Pol</option>
+			<option value="MALE">Musko</option>
+			<option value="FEMALE">Zensko</option>
+		</select>
+		Alergic to substances:
+		<isteven-multi-select class="form-group form-control" input-model="$ctrl.substances" output-model="$ctrl.selectedSubstances" button-label="name" item-label="name" tick-property="ticked"></isteven-multi-select>
+		Alergic to drugs:
+		<isteven-multi-select class="form-group form-control" input-model="$ctrl.drugs" output-model="$ctrl.selectedDrugs" button-label="name" item-label="name" tick-property="ticked"></isteven-multi-select>
+	
+		<input type="submit" class="btn btn-custom" value="Add" ng-click="add.$valid && $ctrl.send()"/>
+		<p>
+			{{$ctrl.status}}
+		</p>
+</form>
+	
+</div>

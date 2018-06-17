@@ -101,6 +101,11 @@ public class Drug {
         	return false;
         return true;
 	}
+	
+	@Override
+	public int hashCode() {
+		return Math.toIntExact(getId());
+	}
 
 	public enum Type {
 		ANTIBIOTIC, ANALGETIC, OTHER;

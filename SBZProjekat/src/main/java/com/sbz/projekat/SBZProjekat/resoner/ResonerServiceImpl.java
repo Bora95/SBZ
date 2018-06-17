@@ -1,6 +1,7 @@
 package com.sbz.projekat.SBZProjekat.resoner;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,9 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sbz.projekat.SBZProjekat.diagnose.DiagnoseDTO;
 import com.sbz.projekat.SBZProjekat.disies.Disies;
 import com.sbz.projekat.SBZProjekat.disies.DisiesService;
+import com.sbz.projekat.SBZProjekat.drug.Drug;
+import com.sbz.projekat.SBZProjekat.drug.DrugService;
+import com.sbz.projekat.SBZProjekat.medicalRecord.MedicalRecord;
 import com.sbz.projekat.SBZProjekat.medicalRecord.MedicalRecordService;
+import com.sbz.projekat.SBZProjekat.substance.Substance;
 import com.sbz.projekat.SBZProjekat.symptom.Symptom;
 import com.sbz.projekat.SBZProjekat.symptom.SymptomService;
 
@@ -30,6 +36,8 @@ public class ResonerServiceImpl implements ResonerService {
 	private SymptomService symptomService;
 	@Autowired
 	private MedicalRecordService medicalRecordService;
+	@Autowired
+	private DrugService drugService;
 
 	@Override
 	public Disies diagnose(Set<Long> symptoms, Disies.Type type, String jmbg) {
@@ -83,6 +91,68 @@ public class ResonerServiceImpl implements ResonerService {
 			return disiesService.findOne(max.getDisies().getId());
 		}
 		return disiesService.findOne(result.get(0).getDisies().getId());
+	}
+
+	@Override
+	public String validateDiagnose(DiagnoseDTO input) {
+		MedicalRecord mr = medicalRecordService.findOne(input.getJmbg());
+		if(mr == null)
+			return null;
+		List<Drug> drugs = drugService.findAll(input.getDrugs());
+		if(drugs == null || drugs.isEmpty())
+			return null;
+			
+		KieSession kieSession = kieContainer.newKieSession();
+		Set<Substance> alergicToSubstance = new HashSet<>();
+		Set<Drug> alergicToDrug = new HashSet<>();
+		kieSession.setGlobal("alergicToSubstances", alergicToSubstance);
+		kieSession.setGlobal("alergicToDrugs", alergicToDrug);
+		kieSession.getAgenda().getAgendaGroup("getAlergies").setFocus();
+		for (Drug drug : drugs) {
+			kieSession.insert(drug);
+		}
+		kieSession.insert(mr);
+		kieSession.fireAllRules();
+		kieSession.dispose();
+		
+		String ret = "";
+		for (Drug drug : alergicToDrug) {
+			ret += drug.getName() + " "; 
+		}
+		for (Substance substance : alergicToSubstance) {
+			ret += substance.getName() + " ";
+		}
+		
+		return ret;
+	}
+
+	@Override
+	public List<MedicalRecord> getReport(ReportType type) {
+		KieSession kieSession = kieContainer.newKieSession();
+		Set<MedicalRecord> patients = new HashSet<>();
+		kieSession.setGlobal("patients", patients);
+		switch (type) {
+			case HRONIC:
+				kieSession.getAgenda().getAgendaGroup("getHronic").setFocus();
+				break;
+			case ADDICT:		
+				kieSession.getAgenda().getAgendaGroup("getAddicts").setFocus();
+				break;
+			case WEAK:
+				kieSession.getAgenda().getAgendaGroup("getWeakPatients").setFocus();
+				break;
+	
+			default:
+				break;
+		}
+		kieSession.getAgenda().getAgendaGroup("getWeakPatients").setFocus();
+		for(MedicalRecord mr : medicalRecordService.findAll()) {
+			kieSession.insert(mr);
+		}
+		kieSession.insert(System.currentTimeMillis());
+		kieSession.fireAllRules();
+		kieSession.dispose();
+		return new ArrayList<>(patients);
 	}
 
 }

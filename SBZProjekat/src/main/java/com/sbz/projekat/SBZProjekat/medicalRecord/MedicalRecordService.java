@@ -22,5 +22,5 @@ public interface MedicalRecordService {
 	
 	public boolean checkSymptom(@NotNull String jmbg, @NotNull Long symptomId);
 	
-	public MedicalRecord addDiagnose(@NotNull DiagnoseDTO input, @NotNull String jmbg);
+	public MedicalRecord addDiagnose(@NotNull DiagnoseDTO input);
 }

@@ -43,7 +43,7 @@ angular.module('get-diagnose').component('myGetDiagnose', {
 		this.redirect = () => {
 			this.status = null;
 			if(!this.selectedRecord || !this.selectedRecord.originalObject.jmbg) {
-				this.status = "Select medical record"
+				this.status = "Select medical record";
 				return;
 			}
 			if(!this.diagnose) {

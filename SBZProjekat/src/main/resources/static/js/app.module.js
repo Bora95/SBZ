@@ -10,6 +10,12 @@ angular.module('sbz', [
 	'get-diagnose',
 	'get-disies',
 	'get-symptoms',
-	'give-therapy'
+	'give-therapy',
+	'get-report',
+	'add-substance',
+	'add-drug',
+	'add-symptom',
+	'add-disies',
+	'add-record'
 	
 ]);

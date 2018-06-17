@@ -9,6 +9,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sbz.projekat.SBZProjekat.disies.Disies;
 import com.sbz.projekat.SBZProjekat.disies.DisiesService;
+import com.sbz.projekat.SBZProjekat.medicalRecord.MedicalRecord;
 import com.sbz.projekat.SBZProjekat.user.User;
 
 @RestController
@@ -28,6 +31,19 @@ public class ResonerController {
 	private ResonerService resonerService;
 	@Autowired
 	private DisiesService disiesService;
+	
+	@GetMapping("/report/{type:HRONIC|ADDICT|WEAK}")
+	public ResponseEntity<List<MedicalRecord>> getWeakPatients(@PathVariable ResonerService.ReportType type) {
+		User user = (User) session.getAttribute("user");
+		if(user == null)
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		
+		List<MedicalRecord> ret = resonerService.getReport(type);
+		if(ret == null || ret.isEmpty())
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		
+		return new ResponseEntity<>(ret, HttpStatus.OK);
+	}
 	
 	@PostMapping
 	public ResponseEntity<Disies> getDiganose(@RequestBody @Valid ResonerDTO input) {

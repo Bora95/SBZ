@@ -6,12 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections4.iterators.ArrayListIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Sets;
 import com.sbz.projekat.SBZProjekat.symptom.Symptom;
 import com.sbz.projekat.SBZProjekat.symptom.SymptomService;
 
@@ -42,6 +40,15 @@ public class DisiesServiceImpl implements DisiesService {
 	@Override
 	@Transactional(readOnly = false)
 	public Disies add(DisiesDTO input) {
+		if(input.getType().equals(Disies.Type.TYPE3) && (input.getSymptoms().size() < 2 || input.getSpecificSymptoms().size() == 0))
+			return null;
+		
+		Set<Long> tmp = new HashSet<>();
+		tmp.addAll(input.getSymptoms());
+		tmp.addAll(input.getSpecificSymptoms());
+		if(tmp.size() < (input.getSpecificSymptoms().size() + input.getSymptoms().size()))
+			return null;
+		
 		Disies save = new Disies(input.getName(), null, null, input.getType());
 		for(Long symptom : input.getSymptoms()) {
 			save.getSymptoms().add(symptomService.findOne(symptom));

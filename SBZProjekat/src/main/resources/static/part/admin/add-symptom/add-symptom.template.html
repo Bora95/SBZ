@@ -1,0 +1,18 @@
+<div class="col-md-4">
+	<form name="add">
+		<input type="text" class="form-group form-control" placeholder="Name*" ng-model="$ctrl.data.name" required/>
+		Symptoms:
+		<isteven-multi-select class="form-group form-control" input-model="$ctrl.symptoms" output-model="$ctrl.selectedSymptoms" button-label="name" item-label="name" tick-property="ticked"></isteven-multi-select>
+		Drugs:
+		<isteven-multi-select class="form-group form-control" input-model="$ctrl.drugs" output-model="$ctrl.selectedDrugs" button-label="name" item-label="name" tick-property="ticked"></isteven-multi-select>
+		Diseases
+		<isteven-multi-select class="form-group form-control" input-model="$ctrl.disies" output-model="$ctrl.selectedDisies" button-label="name" item-label="name" tick-property="ticked"></isteven-multi-select>
+		<input type="number" class="form-group form-control" step="1" placeholder="Cases" ng-model="$ctrl.data.cases"/>
+		<input type="number" class="form-group form-control" step="1" placeholder="timeDuration in miliseconds" ng-model="$ctrl.data.timeDuration"/>
+		<input type="submit" class="btn btn-custom" value="Add" ng-click="add.$valid && $ctrl.send()"/>
+		<p>
+			{{$ctrl.status}}
+		</p>
+</form>
+	
+</div>

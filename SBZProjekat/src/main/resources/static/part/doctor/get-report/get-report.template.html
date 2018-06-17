@@ -1,0 +1,23 @@
+<div class="col-md-6">
+	<select ng-model="$ctrl.reportType" class="form-group form-control" ng-change="$ctrl.getReport()">
+		<option disabled selected value>Report type</option>
+		<option value="HRONIC">Hronic potential</option>
+		<option value="ADDICT">Addict potential</option>
+		<option value="WEAK">Weak patients</option>
+	</select>
+	<p>
+		{{$ctrl.status}}
+	</p>
+	<table ng-if="$ctrl.patients" class="table">
+		<tr>
+			<th>JMBG</th>
+			<th>First name</th>
+			<th>Last name</th>
+		</tr>
+		<tr ng-repeat="p in $ctrl.patients">
+			<td>{{p.jmbg}}</td>
+			<td>{{p.firstName}}</td>
+			<td>{{p.lastName}}</td>
+		</tr>
+	</table>
+</div>

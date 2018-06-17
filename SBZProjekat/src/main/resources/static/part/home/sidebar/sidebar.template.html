@@ -4,6 +4,26 @@
 				Add user
 		</a>
 	</li>
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.add-substance" ui-sref-active="active">
+				Add substance
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.add-drug" ui-sref-active="active">
+				Add drug
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.add-symptom" ui-sref-active="active">
+				Add symptom
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.add-disies" ui-sref-active="active">
+				Add diseas
+		</a>
+	</li>
 </ul>
 
 <ul class="nav flex-column" ng-if="$root.user.type == 'DOCTOR'">
@@ -25,6 +45,16 @@
 	<li class="nav-item">
 		<a class="nav-link" ui-sref="home.give-therapy" ui-sref-active="active">
 				Give therapy
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.get-report" ui-sref-active="active">
+				Reports
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" ui-sref="home.add-record" ui-sref-active="active">
+				Add record
 		</a>
 	</li>
 </ul>

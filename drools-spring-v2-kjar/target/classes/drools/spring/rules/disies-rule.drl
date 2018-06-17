@@ -5,13 +5,24 @@ import com.sbz.projekat.SBZProjekat.symptom.Symptom;
 import com.google.common.collect.Sets;
 import java.util.Set;
 import com.sbz.projekat.SBZProjekat.medicalRecord.MedicalRecordService;
+import com.sbz.projekat.SBZProjekat.medicalRecord.MedicalRecord;
 import com.sbz.projekat.SBZProjekat.resoner.DisiesSymptomsFact;
 import java.lang.Double;
+import com.sbz.projekat.SBZProjekat.drug.Drug;
+import com.sbz.projekat.SBZProjekat.substance.Substance;
+import com.sbz.projekat.SBZProjekat.diagnose.Diagnose;
+import java.lang.Long
 
 global java.util.Map disiesSymptoms;
 global MedicalRecordService medicalRecordService;
 global java.lang.String jmbg;
 global java.util.List ret;
+global java.util.Set alergicToDrugs;
+global java.util.Set alergicToSubstances;
+global java.util.Map mrDisies;
+global java.lang.Long now;
+global java.util.Set patients;
+
 
 rule "Simptom of disies"
 	agenda-group "getDisesSymptoms"
@@ -101,3 +112,109 @@ rule "Get diagnose for TYPE3"
 	then
 		ret.add($ds);
 end
+
+rule "Check alergies drugs"
+	agenda-group "getAlergies"
+	when
+		$dr : Drug()
+		$mr : MedicalRecord( $dr memberOf alergicToDrugs)
+	then
+		alergicToDrugs.add($dr);
+end
+
+rule "Check alergies substances"
+	agenda-group "getAlergies"
+	when
+		$dr : Drug($ss : substances)
+		$mr : MedicalRecord( $as : alergicToSubstances )
+		$s : Substance( this memberOf $as ) from $ss
+	then
+		alergicToSubstances.add($s);
+end
+
+rule "Hronic diseases"
+	agenda-group "getHronic"
+	when
+		$mr : MedicalRecord( $dd : diagnoses )
+		$now : Long()
+		Diagnose( $now - timeStamp < 63113904000, $d : disies ) from $dd
+		$list : List() from collect(Disies(name == $mr.getJmbg()))
+		Disies( this not memberOf $list, name != "Prehlada", name != "Groznica" ) from $d
+		Number( intValue > 5 ) from accumulate(
+			Diagnose( disies.getId() == $d.getId ) from $dd,
+			init(int i = 0;),
+			action(i++;),
+			result(i)
+		)
+	then
+		patients.add($mr);
+		insert(new Disies($d.getId(), $mr.getJmbg()));
+end
+
+rule "Adicts"
+	agenda-group "getAddicts"
+	when
+		$mr : MedicalRecord( $dd : diagnoses )
+		$now : Long()
+		Number( intValue > 0 ) from accumulate(
+			$d : Diagnose( $now - timeStamp < 15778476000, $dr : drugs ) from $dd,
+			init(int r = 0; int i = 0; Set<Long> doctors = Sets.newHashSet();),
+			action(
+				for(Drug drug : (Set<Drug>)$dr){
+					if(drug.getType() == Drug.Type.ANALGETIC) {
+						i++;
+						doctors.add($d.getDoctor().getId());
+						break;
+					}
+				}
+				if(i >= 6 && doctors.size() >= 3) {
+					r = 1;
+				}
+			),
+			result(r)
+		)
+	then
+		patients.add($mr);
+end
+
+rule "Wreak patients"
+	agenda-group "getWeakPatients"
+	when
+		$mr : MedicalRecord( $dd : diagnoses )
+		$now : Long()
+		Number( intValue > 0 ) from accumulate(
+			$d : Diagnose( $now - timeStamp < 31556952000, $dr : drugs ) from $dd,
+			init(int r = 0; int i = 0; Set<Long> disies = Sets.newHashSet();),
+			action(
+				for(Drug drug : (Set<Drug>)$dr){
+					if(drug.getType() == Drug.Type.ANTIBIOTIC) {
+						i++;
+						disies.add($d.getDisies().getId());
+						break;
+					} else {
+						r = -1;
+					}
+				}
+				if(i >= 10 && disies.size() >= 2 && r > -1) {
+					r = 1;
+				}
+			),
+			result(r)
+		)
+	then
+		patients.add($mr);
+end
+
+/*rule "Heart rate monitor"
+	agenda-group "monitoring"
+	when
+		 Number(intValue > 25) from accumulate(
+		 	HeartBeatEvent(  )
+		 	over window:time(10s),
+		 	init(int i =0;),
+		 	action(i++;),
+		 	result(i)
+		 )
+	then
+		System.out.println("ubrzan");
+end*/

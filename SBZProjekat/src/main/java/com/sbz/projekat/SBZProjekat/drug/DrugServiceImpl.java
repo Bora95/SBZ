@@ -1,6 +1,7 @@
 package com.sbz.projekat.SBZProjekat.drug;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,11 @@ public class DrugServiceImpl implements DrugService {
 	@Override
 	public List<Drug> findAll() {
 		return drugRepository.findAll();
+	}
+
+	@Override
+	public List<Drug> findAll(Set<Long> ids) {
+		return drugRepository.findByIdIn(ids);
 	}
 
 	@Override

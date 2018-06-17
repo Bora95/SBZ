@@ -11,6 +11,7 @@ import com.sbz.projekat.SBZProjekat.diagnose.DiagnoseDTO;
 import com.sbz.projekat.SBZProjekat.diagnose.DiagnoseService;
 import com.sbz.projekat.SBZProjekat.disies.Disies;
 import com.sbz.projekat.SBZProjekat.drug.Drug;
+import com.sbz.projekat.SBZProjekat.drug.DrugService;
 import com.sbz.projekat.SBZProjekat.substance.SubstanceService;
 import com.sbz.projekat.SBZProjekat.symptom.Symptom;
 import com.sbz.projekat.SBZProjekat.symptom.SymptomService;
@@ -27,6 +28,8 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	private SubstanceService substanceService;
 	@Autowired
 	private DiagnoseService diagnosService;
+	@Autowired
+	private DrugService drugService;
 	
 	@Override
 	public MedicalRecord findOne(String jmbg) {
@@ -41,9 +44,14 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 	@Override
 	@Transactional(readOnly = false)
 	public MedicalRecord add(MedicalRecordDTO input) {
+		if(findOne(input.getJmbg()) != null)
+			return null;
 		MedicalRecord save = new MedicalRecord(input.getJmbg(), input.getFirstName(), input.getLastName(), input.getGender());
 		for(Long substance : input.getAlergicToSubstances()) {
 			save.getAlergicToSubstances().add(substanceService.findOne(substance));
+		}
+		for(Long drug : input.getAlergicToDrugs()) {
+			save.getAlergicToDrugs().add(drugService.findOne(drug));
 		}
 		return medicalRecordRepository.save(save);
 	}
@@ -71,6 +79,8 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 			medicalRecordDB.getDiagnoses().addAll(input.getDiagnoses());
 		if(input.getAlergicToSubstances() != null)
 			medicalRecordDB.getAlergicToSubstances().addAll(input.getAlergicToSubstances());
+		if(input.getAlergicToDrugs() != null)
+			medicalRecordDB.getAlergicToDrugs().addAll(input.getAlergicToDrugs());
 		
 		return medicalRecordRepository.save(medicalRecordDB);
 	}
@@ -147,8 +157,8 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
 	@Override
 	@Transactional(readOnly = false)
-	public MedicalRecord addDiagnose(DiagnoseDTO input, String jmbg) {
-		MedicalRecord mr = findOne(jmbg);
+	public MedicalRecord addDiagnose(DiagnoseDTO input) {
+		MedicalRecord mr = findOne(input.getJmbg());
 		if(mr == null)
 			return null;
 		Diagnose diagnose = diagnosService.add(input);

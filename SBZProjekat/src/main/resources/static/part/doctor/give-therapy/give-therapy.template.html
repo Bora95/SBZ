@@ -28,5 +28,9 @@
 			     match-class="highlight"
 			     initial-value="$ctrl.initDisies"></div>
 		<isteven-multi-select class="form-group form-control" input-model="$ctrl.drugs" output-model="$ctrl.selectedDrugs" button-label="name" item-label="name" tick-property="ticked"></isteven-multi-select>
+		<input type="submit" class="btn btn-custom" value="Give therapy" ng-click="$ctrl.send()"/>
+		<p>
+			{{$ctrl.status}}
+		</p>
 	</form>
 </div>

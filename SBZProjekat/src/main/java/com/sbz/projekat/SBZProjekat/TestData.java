@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.google.common.collect.Sets;
 import com.sbz.projekat.SBZProjekat.diagnose.Diagnose;
+import com.sbz.projekat.SBZProjekat.diagnose.DiagnoseDTO;
 import com.sbz.projekat.SBZProjekat.diagnose.DiagnoseService;
 import com.sbz.projekat.SBZProjekat.disies.Disies;
 import com.sbz.projekat.SBZProjekat.disies.DisiesService;
@@ -28,6 +29,8 @@ import com.sbz.projekat.SBZProjekat.medicalRecord.MedicalRecord;
 import com.sbz.projekat.SBZProjekat.medicalRecord.MedicalRecordService;
 import com.sbz.projekat.SBZProjekat.resoner.DisiesSymptomsFact;
 import com.sbz.projekat.SBZProjekat.resoner.ResonerService;
+import com.sbz.projekat.SBZProjekat.substance.Substance;
+import com.sbz.projekat.SBZProjekat.substance.SubstanceService;
 import com.sbz.projekat.SBZProjekat.symptom.Symptom;
 import com.sbz.projekat.SBZProjekat.symptom.SymptomService;
 import com.sbz.projekat.SBZProjekat.user.User;
@@ -55,6 +58,8 @@ public class TestData {
 	private DiagnoseService diagnoseService;
 	@Autowired
 	private ResonerService resonerService;
+	@Autowired
+	private SubstanceService substanceService;
 	
 	
 	@PostConstruct
@@ -62,10 +67,15 @@ public class TestData {
 		User user1 = new User("admin", "admin", User.Type.ADMIN, "admin", "admin");
 		userService.add(user1);
 		
-		User user2 = userService.add(new User("doktor", "doktor", User.Type.DOCTOR, "doktor", "doktor"));	
+		User user2 = userService.add(new User("doktor", "doktor", User.Type.DOCTOR, "doktor", "doktor"));
+		User user3 = userService.add(new User("doktorica", "doktorica", User.Type.DOCTOR, "doktorica", "doktorica"));
 		
-		Drug dr1 = drugService.add(new Drug("Antibiotik", Drug.Type.ANTIBIOTIC, null));
-		Drug dr2 = drugService.add(new Drug("Analgetik", Drug.Type.ANALGETIC, null));
+		Substance sub1 = substanceService.add(new Substance("Sastojak1"));
+		Substance sub2 = substanceService.add(new Substance("Sastojak2"));
+		Substance sub3 = substanceService.add(new Substance("Sastojak3"));
+		
+		Drug dr1 = drugService.add(new Drug("Antibiotik", Drug.Type.ANTIBIOTIC, Sets.newHashSet(sub2)));
+		Drug dr2 = drugService.add(new Drug("Analgetik", Drug.Type.ANALGETIC, Sets.newHashSet(sub1, sub2, sub3)));
 		Drug dr3 = drugService.add(new Drug("Ostako", Drug.Type.OTHER, null));
 		
 		Symptom s1  = symptomService.add(new Symptom("Curenje iz nosa", null, null, null, null, null));
@@ -111,18 +121,56 @@ public class TestData {
 		Symptom s31 = symptomService.add(new Symptom("U poslednjih 21 dana dijagnostikovana bolest za koju je primao antibiotike", -1814400000L, null, Sets.newHashSet(dr1), null, null));
 		Disies d8 = disiesService.add(new Disies("Akutna bubrezna povreda", Sets.newHashSet(s24, s17, s21, s20, s22), Sets.newHashSet(s27, s31), Disies.Type.TYPE3));
 		
-		MedicalRecord mr1 = new MedicalRecord("0504995800052", "Borislav", "Puzic", MedicalRecord.Gender.MALE);
-		Diagnose dg1 = diagnoseService.add(new Diagnose(d2, Sets.newHashSet(dr1), user2));
+		MedicalRecord mr1 = new MedicalRecord("0504995800050", "Borislav", "Puzic", MedicalRecord.Gender.MALE);
+		mr1.setAlergicToDrugs(Sets.newHashSet(dr1));
+		mr1.setAlergicToSubstances(Sets.newHashSet(sub2));
+		Diagnose dg1 = diagnoseService.add(new Diagnose(d3, Sets.newHashSet(dr3), user2));
+		Diagnose dg2 = diagnoseService.add(new Diagnose(d3, Sets.newHashSet(dr3), user2));
+		Diagnose dg3 = diagnoseService.add(new Diagnose(d3, Sets.newHashSet(dr3), user2));
 		mr1.getDiagnoses().add(dg1);
+		mr1.getDiagnoses().add(dg2);
+		mr1.getDiagnoses().add(dg3);
 		mr1 = medicalRecordService.add(mr1);
 		
-		DisiesSymptomsFact fact1 = new DisiesSymptomsFact(d1, Sets.newHashSet(s1, s2, s3, s4));
+		MedicalRecord mr2 = new MedicalRecord("0504995800051", "Borislava", "Puzic", MedicalRecord.Gender.FEMALE);
+		mr2.setAlergicToDrugs(Sets.newHashSet(dr1));
+		mr2.setAlergicToSubstances(Sets.newHashSet(sub2));
+		Diagnose dg4 = diagnoseService.add(new Diagnose(d4, Sets.newHashSet(dr2), user2));
+		Diagnose dg5 = diagnoseService.add(new Diagnose(d4, Sets.newHashSet(dr2), user2));
+		Diagnose dg6 = diagnoseService.add(new Diagnose(d4, Sets.newHashSet(dr2), user2));
+		Diagnose dg7 = diagnoseService.add(new Diagnose(d3, Sets.newHashSet(dr2), user2));
+		Diagnose dg8 = diagnoseService.add(new Diagnose(d3, Sets.newHashSet(dr2), user2));
+		Diagnose dg9 = diagnoseService.add(new Diagnose(d3, Sets.newHashSet(dr2), user2));
+		mr2.getDiagnoses().add(dg4);
+		mr2.getDiagnoses().add(dg5);
+		mr2.getDiagnoses().add(dg6);
+		mr2.getDiagnoses().add(dg7);
+		mr2.getDiagnoses().add(dg8);
+		mr2.getDiagnoses().add(dg9);
+		mr2 = medicalRecordService.add(mr2);
+		
+		MedicalRecord mr3 = new MedicalRecord("0505995800053", "Pera", "Peric", MedicalRecord.Gender.MALE);
+		mr3.setAlergicToDrugs(Sets.newHashSet(dr1));
+		mr3.setAlergicToSubstances(Sets.newHashSet(sub2));
+		Diagnose dg10 = diagnoseService.add(new Diagnose(d4, Sets.newHashSet(dr1), user2));
+		Diagnose dg11 = diagnoseService.add(new Diagnose(d4, Sets.newHashSet(dr1), user2));
+		Diagnose dg12 = diagnoseService.add(new Diagnose(d4, Sets.newHashSet(dr1), user2));
+		Diagnose dg13 = diagnoseService.add(new Diagnose(d3, Sets.newHashSet(dr1), user2));
+		Diagnose dg14 = diagnoseService.add(new Diagnose(d3, Sets.newHashSet(dr1), user2));
+		Diagnose dg15 = diagnoseService.add(new Diagnose(d3, Sets.newHashSet(dr2), user2));
+		mr3.getDiagnoses().add(dg10);
+		mr3.getDiagnoses().add(dg11);
+		mr3.getDiagnoses().add(dg12);
+		mr3.getDiagnoses().add(dg13);
+		mr3.getDiagnoses().add(dg14);
+		mr3.getDiagnoses().add(dg15);
+		mr3 = medicalRecordService.add(mr3);
+
+	
+//		resonerService.validateDiagnose(new DiagnoseDTO(d1.getId(), Sets.newHashSet(dr1.getId(), dr2.getId()), user2.getId()), mr1.getJmbg());
 		
 		
-		for (Disies disies : disiesService.findDisieses(Sets.newHashSet(s1.getId(), s3.getId(), s5.getId(), s27.getId()))) {
-			System.out.println(disies.getName());
-		}
-		
+//		DisiesSymptomsFact fact1 = new DisiesSymptomsFact(d1, Sets.newHashSet(s1, s2, s3, s4));
 		//resonerService.diagnose(Sets.newHashSet(s1, s2, s3, s4), Disies.Type.TYPE1, mr1.getJmbg());
 		
 //		KieSession kieSession = kieContainer.newKieSession();

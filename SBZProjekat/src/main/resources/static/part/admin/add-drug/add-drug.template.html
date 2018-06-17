@@ -1,0 +1,17 @@
+<div class="col-md-4">
+	<form name="add">
+		<input type="text" class="form-group form-control" placeholder="Name*" ng-model="$ctrl.data.name" required/>
+		<isteven-multi-select class="form-group form-control" input-model="$ctrl.substances" output-model="$ctrl.selected" button-label="name" item-label="name" tick-property="ticked"></isteven-multi-select>
+		<select ng-model="$ctrl.data.type" class="form-group form-control" required>
+			<option disabled selected value>Tip leka</option>
+			<option value="ATBIOTIC">Antibiotik</option>
+			<option value="ANALGETIC">Analgetik</option>
+			<option value="OTHER">Drugo</option>
+		</select>
+		<input type="submit" class="btn btn-custom" value="Add" ng-click="add.$valid && $ctrl.send()"/>
+		<p>
+			{{$ctrl.status}}
+		</p>
+</form>
+	
+</div>
